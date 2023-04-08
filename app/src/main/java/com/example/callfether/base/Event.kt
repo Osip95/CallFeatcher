@@ -1,4 +1,4 @@
 package com.example.callfether.base
 
-interface Event {
+interface UiEvent {
 }

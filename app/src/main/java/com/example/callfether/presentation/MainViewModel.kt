@@ -1,29 +1,24 @@
 package com.example.callfether.presentation
 
+
 import androidx.lifecycle.LiveData
-import com.example.callfether.ErrorCodes
 import com.example.callfether.base.BaseViewModel
-import com.example.callfether.base.Event
 import com.example.callfether.base.SingleLiveEvent
+import com.example.callfether.base.UiEvent
 import com.example.callfether.ui.OnButtonGoToCallScreen
-import com.example.callfether.ui.OnEditTextClicked
-import com.example.callfether.ui.UiEvent
 import com.example.callfether.ui.ViewState
 
 class MainViewModel:BaseViewModel<ViewState>() {
-    private val _goCallEvent = SingleLiveEvent<String>()
-    val goWindEvent: LiveData<String> = _goCallEvent
-    override fun initialViewState(): ViewState = ViewState(numberPhone = "",
-    errorCode = ErrorCodes.NO_ERROR)
-
-    override fun reduce(event: Event, previousState: ViewState): ViewState? {
-        when(event) {
+    private val _goCallScrintEvent = SingleLiveEvent<String>()
+    val goCallScrintEvent: LiveData<String> = _goCallScrintEvent
+    override fun initialViewState(): ViewState = ViewState(numberPhone = "")
+    override fun reduce(event: UiEvent, previousState: ViewState): ViewState? {
+        return when(event) {
             is OnButtonGoToCallScreen -> {
-                if(event.number == "") return previousState.copy(errorCode = ErrorCodes.NUMBER_PHONE_EMPTY)
-                _goCallEvent.value = event.number
-                return previousState.copy(numberPhone = event.number, errorCode = ErrorCodes.NO_ERROR)
+                _goCallScrintEvent.value = event.number
+                previousState.copy(numberPhone = event.number)
             }
-            else -> return null
+            else -> null
         }
     }
 }

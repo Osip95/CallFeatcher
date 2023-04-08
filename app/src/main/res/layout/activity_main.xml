@@ -6,40 +6,48 @@
     android:layout_height="match_parent"
     tools:context=".ui.MainActivity">
 
-    <EditText
-        android:id="@+id/EtPhoneNumber"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="256dp"
-        android:ems="10"
-        android:focusable="true"
-        android:inputType="number"
-        android:minHeight="48dp"
-        android:text="@string/phone_number"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.497"
-        app:layout_constraintStart_toStartOf="parent"
-        tools:ignore="TextFields" />
 
     <Button
         android:id="@+id/btnGoToCallScreen"
-        android:layout_width="wrap_content"
+        android:enabled = "false"
+        android:layout_marginLeft = "20dp"
+        android:layout_marginRight = "20dp"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="84dp"
         android:text="@string/go_to_call_screen"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/EtPhoneNumber" />
-
-    <TextView
-        android:id="@+id/tvError"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text=""
-        android:textColor="@color/red"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/btnGoToCallScreen" />
+        app:layout_constraintTop_toTopOf="parent" />
+
+
+    <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/inputLayout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingLeft="20dp"
+        android:paddingRight="20dp"
+        app:errorEnabled="false"
+        app:endIconMode="custom"
+        app:endIconDrawable="@drawable/ic_action_name"
+        app:endIconTint = "@color/green"
+        app:endIconContentDescription="ok"
+        app:layout_constraintBottom_toTopOf="@+id/btnGoToCallScreen"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/EtPhoneNumber"
+
+            android:maxLength="10"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:hint="@string/phone_number"
+            android:inputType="phone"
+            android:scaleType="center" />
+    </com.google.android.material.textfield.TextInputLayout>
+
+
 </androidx.constraintlayout.widget.ConstraintLayout>
