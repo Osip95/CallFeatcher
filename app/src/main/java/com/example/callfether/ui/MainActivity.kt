@@ -8,12 +8,9 @@ import android.text.Editable
 import android.text.TextWatcher
 import android.widget.Button
 import android.widget.EditText
-import com.example.callfether.ERROR_NUMBER_PHONE
-import com.example.callfether.PHONE_NUMBER_KEY
 import com.example.callfether.R
 import com.example.callfether.presentation.MainViewModel
 import com.google.android.material.textfield.TextInputLayout
-import com.google.android.material.textfield.TextInputLayout.END_ICON_CUSTOM
 import com.google.android.material.textfield.TextInputLayout.END_ICON_NONE
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
@@ -30,27 +27,27 @@ class MainActivity : AppCompatActivity() {
         inputLayoutPhoneNumber = findViewById(R.id.inputLayout)
         inputLayoutPhoneNumber.endIconMode = END_ICON_NONE
 
-        mainViewModel.goCallScrintEvent.observe(this, ::goToCallScreenActivity)
+        mainViewModel.goCallScreenEvent.observe(this, ::goToCallScreenActivity)
+        mainViewModel.viewState.observe(this,::render)
 
         etPhoneNumber.addTextChangedListener(object : TextWatcher {
-            override fun afterTextChanged(s: Editable?) {
-            }
-            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {
-            }
+            override fun afterTextChanged(s: Editable?) = Unit
+            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) = Unit
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
-                val numberPhone = s.toString()
-                val stateOnlyNumbers = numberPhone.all {
-                    it.isDigit()
-                }
-                if (!stateOnlyNumbers || (s?.length != 10)) {
-                    inputLayoutPhoneNumber.isErrorEnabled = true
-                    inputLayoutPhoneNumber.error = ERROR_NUMBER_PHONE
-                    btnGoToScreenCall.isEnabled = false
-                } else {
-                    btnGoToScreenCall.isEnabled = true
-                    inputLayoutPhoneNumber.isErrorEnabled = false
-                    inputLayoutPhoneNumber.endIconMode = END_ICON_CUSTOM
-                }
+                mainViewModel.processUIEvent(OnTextChanged(s.toString()))
+               // val numberPhone = s.toString()
+//                val onlyNumbers = numberPhone.all {
+//                    it.isDigit()
+//                }
+//                if (!onlyNumbers || (s?.length != 10)) {
+//                    inputLayoutPhoneNumber.isErrorEnabled = true
+//                    inputLayoutPhoneNumber.error = getString(R.string.invalid_phone_number)
+//                    btnGoToScreenCall.isEnabled = false
+//                } else {
+//                    btnGoToScreenCall.isEnabled = true
+//                    inputLayoutPhoneNumber.isErrorEnabled = false
+//                    inputLayoutPhoneNumber.endIconMode = END_ICON_CUSTOM
+//                }
             }
         })
 
@@ -59,9 +56,16 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
+    private fun render(viewState: ViewState) {
+        inputLayoutPhoneNumber.isErrorEnabled = viewState.isErrorEnabled
+        inputLayoutPhoneNumber.error = viewState.errorTextInvalid
+        btnGoToScreenCall.isEnabled = viewState.btnGoToScreenCallIsEnabled
+        inputLayoutPhoneNumber.endIconMode = viewState.inputLayoutPhoneNumberEndIconMode
+    }
+
     private fun goToCallScreenActivity(number: String) {
         val intent = Intent(this, CallScreenActivity::class.java).apply {
-            putExtra(PHONE_NUMBER_KEY, number)
+            putExtra(getString(R.string.phone_number_key), number)
         }
         startActivity(intent)
     }

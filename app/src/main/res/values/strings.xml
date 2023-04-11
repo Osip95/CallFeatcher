@@ -3,6 +3,8 @@
     <string name="phone_number">Phone number</string>
     <string name="go_to_call_screen">Go to call screen</string>
     <string name="call_up">Call up</string>
+    <string name="phone_number_key">PHONE NUMBER KEY</string>
+    <string name="invalid_phone_number">Invalid phone number</string>
     <string name="formatted_phone_number">+7%1$s</string>
 
 </resources>
