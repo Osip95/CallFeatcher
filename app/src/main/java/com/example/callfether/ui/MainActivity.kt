@@ -35,19 +35,6 @@ class MainActivity : AppCompatActivity() {
             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) = Unit
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
                 mainViewModel.processUIEvent(OnTextChanged(s.toString()))
-               // val numberPhone = s.toString()
-//                val onlyNumbers = numberPhone.all {
-//                    it.isDigit()
-//                }
-//                if (!onlyNumbers || (s?.length != 10)) {
-//                    inputLayoutPhoneNumber.isErrorEnabled = true
-//                    inputLayoutPhoneNumber.error = getString(R.string.invalid_phone_number)
-//                    btnGoToScreenCall.isEnabled = false
-//                } else {
-//                    btnGoToScreenCall.isEnabled = true
-//                    inputLayoutPhoneNumber.isErrorEnabled = false
-//                    inputLayoutPhoneNumber.endIconMode = END_ICON_CUSTOM
-//                }
             }
         })
 

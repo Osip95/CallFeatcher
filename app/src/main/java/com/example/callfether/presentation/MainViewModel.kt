@@ -1,11 +1,9 @@
 package com.example.callfether.presentation
 
 
-
-
-
 import androidx.lifecycle.LiveData
 import com.example.callfether.App
+import com.example.callfether.NO_ERROR
 import com.example.callfether.R
 import com.example.callfether.base.BaseViewModel
 import com.example.callfether.base.SingleLiveEvent
@@ -33,22 +31,34 @@ class MainViewModel : BaseViewModel<ViewState>() {
                 previousState.copy(phoneNumber = event.number)
             }
             is OnTextChanged -> {
-                val onlyNumbers = event.numberPhone.all {
+                val onlyNumbers = !event.numberPhone.all {
                     it.isDigit()
                 }
-                if (!onlyNumbers || (event.numberPhone.length != 10)) {
-                    previousState.copy(isErrorEnabled = true,
-                        errorTextInvalid = App.instance.getString(R.string.invalid_phone_number),
-                        btnGoToScreenCallIsEnabled = false,
+                val tenSymbols = event.numberPhone.length != 10
+                val tenSymbolsAndOnlyNumbers = onlyNumbers && tenSymbols
+                when (true) {
+                    tenSymbolsAndOnlyNumbers -> previousState.copy(
+                        isErrorEnabled = true,
+                        errorTextInvalid = App.instance.getString(R.string.common_error),
+                        btnGoToScreenCallIsEnabled = false
                     )
-                } else {
-                    previousState.copy(isErrorEnabled = false,
-                        inputLayoutPhoneNumberEndIconMode = TextInputLayout.END_ICON_CUSTOM,
+                    onlyNumbers -> previousState.copy(
+                        isErrorEnabled = true,
+                        errorTextInvalid = App.instance.getString(R.string.number_must_be_digits_only),
+                        btnGoToScreenCallIsEnabled = false
+                    )
+                    tenSymbols -> previousState.copy(
+                        isErrorEnabled = true,
+                        errorTextInvalid = App.instance.getString(R.string.number_must_be_10_characters),
+                        btnGoToScreenCallIsEnabled = false
+                    )
+                    else -> previousState.copy(
+                        isErrorEnabled = false,
                         btnGoToScreenCallIsEnabled = true,
-                        errorTextInvalid = ""
+                        inputLayoutPhoneNumberEndIconMode = TextInputLayout.END_ICON_CUSTOM,
+                        errorTextInvalid = NO_ERROR
                     )
                 }
-
             }
             else -> null
         }
