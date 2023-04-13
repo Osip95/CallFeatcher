@@ -5,10 +5,7 @@ import androidx.lifecycle.LiveData
 import com.example.callfether.base.BaseViewModel
 import com.example.callfether.base.SingleLiveEvent
 import com.example.callfether.base.UiEvent
-import com.example.callfether.ui.NumberErrors
-import com.example.callfether.ui.OnButtonGoToCallScreen
-import com.example.callfether.ui.OnTextChanged
-import com.example.callfether.ui.ViewState
+import com.example.callfether.ui.*
 
 private const val CORRECT_NUMBER_LENGTH = 10
 
@@ -18,36 +15,30 @@ class MainViewModel : BaseViewModel<ViewState>() {
     val goCallScreenEvent: LiveData<String> = _goCallScreenEvent
     override fun initialViewState(): ViewState = ViewState(
         phoneNumber = "",
-        errorType = null
+        validationState = PhoneValidationState.NotValidated
     )
 
     override fun reduce(event: UiEvent, previousState: ViewState): ViewState? {
         return when (event) {
             is OnButtonGoToCallScreen -> {
                 _goCallScreenEvent.value = previousState.phoneNumber
-                previousState.copy(phoneNumber = previousState.phoneNumber)
+                null
             }
             is OnTextChanged -> {
-                val onlyNumbers = !event.numberPhone.all {
-                    it.isDigit()
+                val phoneNumber = event.numberPhone
+                val onlyDigits = phoneNumber.all { it.isDigit() }
+                val tooShort = phoneNumber.length < CORRECT_NUMBER_LENGTH
+                val validationState = when {
+                    phoneNumber.isEmpty() -> PhoneValidationState.NotValidated
+                    !onlyDigits           -> PhoneValidationState.NotValid(PhoneErrorType.NOT_ALL_DIGITS)
+                    tooShort              -> PhoneValidationState.NotValid(PhoneErrorType.TOO_SHORT)
+                    else                  -> PhoneValidationState.Valid
                 }
-                val tenSymbols = event.numberPhone.length != CORRECT_NUMBER_LENGTH
-                val tenSymbolsAndOnlyNumbers = onlyNumbers && tenSymbols
-                when (true) {
-                    tenSymbolsAndOnlyNumbers -> previousState.copy(
-                        errorType = NumberErrors.COMMON_ERROR
-                    )
-                    onlyNumbers -> previousState.copy(
-                        errorType = NumberErrors.DIGITS_ONLY
-                    )
-                    tenSymbols -> previousState.copy(
-                        errorType = NumberErrors.TEN_CHARACTERS
-                    )
-                    else -> previousState.copy(
-                        phoneNumber = event.numberPhone,
-                        errorType = NumberErrors.NO_ERROR
-                    )
-                }
+                previousState.copy(
+                    phoneNumber = event.numberPhone,
+                    validationState = validationState
+                )
+
             }
             else -> null
         }

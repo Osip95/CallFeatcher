@@ -45,8 +45,4 @@ class CallScreenActivity : AppCompatActivity() {
         tvPhoneNumber.text = viewStateCallScreen.phoneNumber
     }
 
-    fun createIntent(context: Context, number: String): Intent =
-        Intent(context, CallScreenActivity::class.java).apply {
-            putExtra(PHONE_NUMBER_KEY, number)
-        }
 }

@@ -26,13 +26,15 @@ class MainActivity : AppCompatActivity() {
         etPhoneNumber = findViewById(R.id.EtPhoneNumber)
         inputLayoutPhoneNumber = findViewById(R.id.inputLayout)
 
-        mainViewModel.goCallScreenEvent.observe(this, ::goToCallScreenActivity)
-        mainViewModel.viewState.observe(this,::render)
+        mainViewModel.goCallScreenEvent.observe(this, ::goToCallScreen)
+        mainViewModel.viewState.observe(this, ::render)
 
 
         etPhoneNumber.addTextChangedListener(object : TextWatcher {
             override fun afterTextChanged(s: Editable?) = Unit
-            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) = Unit
+            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) =
+                Unit
+
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
                 mainViewModel.processUIEvent(OnTextChanged(s.toString()))
             }
@@ -44,33 +46,31 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun render(viewState: ViewState) {
-        when(viewState.errorType){
-            NumberErrors.COMMON_ERROR -> {
+        when (viewState.validationState) {
+            PhoneValidationState.NotValidated -> {
                 btnGoToScreenCall.isEnabled = false
-                inputLayoutPhoneNumber.error = getString(R.string.common_error)
+                inputLayoutPhoneNumber.error = null
+                inputLayoutPhoneNumber.endIconMode = TextInputLayout.END_ICON_NONE
             }
-            NumberErrors.TEN_CHARACTERS -> {
+
+            is PhoneValidationState.NotValid -> {
+                val errorText = when (viewState.validationState.errorType) {
+                    PhoneErrorType.TOO_SHORT -> getString(R.string.number_must_be_10_characters)
+                    PhoneErrorType.NOT_ALL_DIGITS -> getString(R.string.number_must_be_digits_only)
+                }
+                inputLayoutPhoneNumber.error = errorText
                 btnGoToScreenCall.isEnabled = false
-                inputLayoutPhoneNumber.error = getString(R.string.number_must_be_10_characters)
-            }
-            NumberErrors.DIGITS_ONLY -> {
-                btnGoToScreenCall.isEnabled = false
-                inputLayoutPhoneNumber.error = getString(R.string.number_must_be_digits_only)
-            }
-            NumberErrors.NO_ERROR -> {
-                btnGoToScreenCall.isEnabled = true
-                inputLayoutPhoneNumber.error = NO_ERROR
                 inputLayoutPhoneNumber.endIconMode = TextInputLayout.END_ICON_CUSTOM
             }
-            else -> {
-                btnGoToScreenCall.isEnabled = false
-                inputLayoutPhoneNumber.error = NO_ERROR
-                inputLayoutPhoneNumber.endIconMode = TextInputLayout.END_ICON_NONE
+            PhoneValidationState.Valid -> {
+                btnGoToScreenCall.isEnabled = true
+                inputLayoutPhoneNumber.error = null
+                inputLayoutPhoneNumber.endIconMode = TextInputLayout.END_ICON_CUSTOM
             }
         }
     }
 
-    private fun goToCallScreenActivity(number: String) {
-        startActivity(CallScreenActivity.createIntent(this, number))
+        private fun goToCallScreen(number: String) {
+            startActivity(CallScreenActivity.createIntent(this, number))
+        }
     }
-}
