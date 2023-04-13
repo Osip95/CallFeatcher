@@ -12,7 +12,7 @@ import com.example.callfether.presentation.MainViewModel
 import com.google.android.material.textfield.TextInputLayout
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
-private const val NO_ERROR = ""
+
 
 class MainActivity : AppCompatActivity() {
     private val mainViewModel: MainViewModel by viewModel()
